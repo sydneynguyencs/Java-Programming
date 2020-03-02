@@ -1,0 +1,302 @@
+:source-highlighter: coderay
+:icons: font
+:experimental:
+:!sectnums:
+:imagesdir: ./images/
+:handout: ./handout/
+
+:logo: IT.PROG2 -
+ifdef::backend-html5[]
+:logo: image:PROG2-300x300.png[IT.PROG2,100,100,role=right,fit=none,position=top right]
+endif::[]
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+// references
+:url-openjfx: https://openjfx.io/
+:url-openjfx-gradle: {url-openjfx}/openjfx-docs/#gradle
+:url-openjfx-javadoc: {url-openjfx}/javadoc/11/index.html
+:url-scene-builder: https://gluonhq.com/products/scene-builder
+
+// images
+:AppGross: image:VorgabeApp_Gross.png[APPGROSS,500,role=left,fit=none,position=top left]
+:AppKlein: image:VorgabeApp_Klein.png[APPKLEIN,250,role=left,fit=none,position=top left]
+:AppSchmal: image:VorgabeApp_Schmal.png[APPSCHMAL,250,role=left,fit=none,position=top left]
+:AppHilfe: image:AnzeigenHilfeBlau.png[APPHILFE,220,role=top,fit=none,position=top left]
+:AppFehlend: image:FehlenderEintragRot.png[APPFEHLEND,220,role=top,fit=none,position=top left]
+:AppKorrekt: image:KorrekteAusfuehrungGruen.png[APPKORREKT,220,role=top,fit=none,position=top left]
+:MenuLoeschen: image:MenuLoeschen.png[MENULOESCHEN,175,role=top,fit=none,position=top left]
+
+= {logo} Praktikum GUI
+
+== Einleitung
+
+_Im folgenden Praktikum wird eine Applikation erstellt. Diese Applikation stellt keine Ansprüche an ein in der Praxis taugliches Tool. Bestimmt gibt es bessere Tools, die in den entsprechenden Bereichen eingesetzt werden. +
+Es geht darum, dass Sie die in der Vorlesung vermittelten Inhalte ausprobieren und umsetzten können._
+
+=== Ziele
+
+* Sie können ein einfaches JavaFX GUI nach Vorgabe erstellen.
+* Sie setzen die zur Verfügung stehenden Container (Panes) korrekt ein.
+* Sie finden die entsprechenden Einstellungen in der Doku.
+* Sie testen verschiedene Möglichkeiten für die Darstellung und das Envent-Handling aus.
+* Sie wenden das Model-View-Control Pattern korrekt an.
+* Sie können ein GUI mit dem link:{url-scene-builder}[JavaFX Scene Builder] erstellen und FXML Dateien in die Anwendung integrieren.
+
+=== Voraussetzungen
+
+* Vorlesung: GUI Foundations, GUI Toolbox
+
+=== Tooling
+
+* Installiertes JDK 11+
+* Gradle 6.1+
+* JavaFX Scene Builder
+
+Der link:{url-scene-builder}[JavaFX Scene Builder] wird im zweiten Teil des Praktikums verwendet. Hinweise zur Installation und finden sie dort.
+
+=== Struktur
+
+Das Praktikum enthält verschiedene Arten von Aufgaben, die wie folgt gekennzeichnet sind:
+
+[TU] – Theoretische Übung::
+Dient der Repetition bzw. Vertiefung des Stoffes aus der Vorlesung und als Vorbereitung für die nachfolgenden Übungen.
+
+[PU] – Praktische Übung::
+Übungsaufgaben zur praktischen Vertiefung von Teilaspekten des behandelten Themas.
+
+[PA] – Pflichtaufgabe::
+Übergreifende Aufgabe zum Abschluss. Das Lösen dieser Aufgaben ist Pflicht. Sie muss bis zum definierten Zeitpunkt abgegeben werden, wird bewertet und ist Teil der Vornote.
+
+=== Zeit und Bewertung
+
+Für das Praktikum stehen 2 Wochen in den Praktikumslektionen und im Selbststudium zur Verfügung. +
+Je nach Kenntniss- und Erfahrungsstufe benötigen Sie mehr oder
+weniger Zeit.
+Nutzen Sie die Gelegenheit den Stoff und zu vertiefen, Auszuprobieren, Fragen zu stellen und Lösungen zu diskutieren (Intensive-Track). +
+Falls Sie das Thema schon beherrschen müssen Sie nur die Pflichtaufgaben lösen und bis zum angegebenen Zeitpunkt abgeben (Fast-Track).
+
+Die Pflichtaufgabe wird mit 0 bis 2 Punkten bewertet (siehe _Leistungsnachweise_ auf Moodle).
+
+=== Referenzen
+
+* link:{handout}[Praktkikumsverzeichnis – Quellcode, Projektstruktur]
+* link:{url-openjfx}[OpenJFX Webseite]
+* link:{url-openjfx-gradle}[OpenJFX Gradle Konfiguration]
+* link:{url-openjfx-javadoc}[JavaFX 11 Javadoc Dokumentation]
+* link:{url-scene-builder}[JavaFX Scene Builder Website]
+
+
+== Die Übungsapplikation – ROI Calculator
+
+Die Aufgaben in diesem Praktikum basieren auf der nachfolgend beschriebenen Übungsapplikation, die sie auf verschiedene Arten umsetzen.
+
+=== Kurzbeschrieb
+
+Der Capital Assets Calculator soll auf Basis von 4 Eingabewerten die das voraussichtliche Kontovermögen für die kommenden Jahre berechnen. Die Eingabewerte sind:
+
+* Kontovermögen beim Start (Initial amount)
+* Jahreszins, der erwartet wird (Return in %)
+* Kontoverwaltungskosten pro Jahr (Annual cost)
+* Anzahl der Jahre, die berechnet werden sollen (Number of years)
+
+Die daraus errechnete Vermögensentwicklung (pro Jahr eine Zeile) soll im Resultatbereich ausgegeben werden.
+
+* Die Applikation soll die Eingabewerte prüfen und im Falle von ungültigen Werten eine Fehlermeldung im Resultatbereich ausgeben.
+* Die Applikation soll ein Menü zur Verfügung stellen, welches ermöglicht:
+** die eingegebenen Werte zu löschen
+** den Resultatbereich zu löschen
+** einen Hilfetext im Resultatbereich anzuzeigen.
+
+
+=== Anforderungen an die Applikation
+
+NOTE: Bitte beachten Sie die weiter unten folgenden Bilder der Applikation in den verschiedenen Zuständen.
+
+* Nach dem Start der Anwendung wird das Hauptfenster angezeigt, in welchem der Benutzer folgende Aktionen auführen kann:
+** Die 4 Werte eingeben.
+** Mit btn:[Calculate] die Berechnung starten
+** Nach der Berechnung wird das Resultat im Resultatbereich ausgegeben
+** Der Rahmen des Resultatbereichs wird grün, wenn alles i.O. war
+** Ist ein Eingabewert falsch oder unvollständig, so wird eine Meldung ausgegeben (roter Rahmen)
+*** Initial amount: > 0
+*** Return in %: Darf nicht leer sein
+*** Annual cost: > 0 und darf nicht leer sein
+*** Number of years: >0 und < 99, nur ganze Zahlen
+** Das Menü `menu:Clear[]` enthält 6 Einträge:
+*** Je einen Eintrag pro Eingabewert (diese können gewählt oder abgewählt werden), z.B. `menu:Clear[&check; Initial amount]`
+*** Einen Eintrag `menu:Clear[Clear values]`, der alle Eingabewerte, die im Menu gewählt sind, wieder auf leer setzt
+*** Einen Eintrag `menu:Clear[Clear results]`, der den Resultatbereich wieder zurücksetzt.
+** Das Menü `menu:&quest;[]` enthält einen Eintrag:
+*** `menu:&quest;[Show help]` zeigt einen Hilfetext im Resultatfenster an (blauer Rahmen).
+*** Dies soll auch über die Taste kbd:[F1] ausgelöst werden können.
+** Mit btn:[Close] wird die Applikation geschlossen.
+
+TIP: Berechnen Sie den Wert des Vermögens für jedes Jahr mit: `Amount = Amount * (100% + ReturnIn%) - AnnualCost` oder verwenden Sie die bereitgestellte Klasse `ValueHandler`.
+
+==== Bilder als Vorlage
+
+[.float-group]
+--
+{AppKorrekt} {AppFehlend} {AppHilfe} {MenuLoeschen}
+--
+
+
+
+:sectnums:
+:sectnumlevels: 1
+// Beginn des Aufgabenblocks
+
+==  Überlegungen zum Einsatz von Containern (Panes) [TU]
+
+In der Vorlesung wurden verschiedene Container vorgestellt, die Controls oder weitere Container enthalten können.
+Die Kombination dieser Container trägt massgeblich zum Verhalten und zur Gestaltung eine Applikation bei. Vorgestellt wurden z.B.:
+
+****
+[horizontal]
+GridPane:: Ordnet die Inhalte in Zeilen und Spalten an
+HBox:: Ordnet die Inhalte in einer Zeile
+VBox:: Ordnet die Inhalte in einer Spalte
+BorderPane:: Ordnet die Inhalte in 5 Bereichen: Left, Right, Top, Bottom und Center
+...:: weitere können Sie im Manual oder im Unterrichtsstoff nachschlagen...
+****
+
+Für die Benutzeroberfläche der zu erstellende Applikation sind die folgenden Anforderungen bekannt:
+
+[cols="55,~",frame=none,grid=none]
+|===
+| {AppGross}
+| Der Resultatbereich füllt den Platz des Fensters aus. +
+Die Eingabefelder und die Beschriftungen sind links oben angeordnet und bleiben in der Grösse konstant. +
+Das Menü ist oben-links angeordnet, die Buttons bleiben zentriert.
+|===
+
+[cols="30,~",frame=none,grid=none]
+|===
+| {AppKlein}
+| Beim Verkleinern des Fensters verkleinert sich der Resultatbereich. +
+Die Breite des Fensters soll limitiert werden, so dass die Beschriftungen lesbar bleiben.
+|===
+
+[cols="30,~",frame=none, grid=none]
+|===
+| {AppSchmal}
+| Wird die Höhe des Fensters vergrössert, wächst der Resultatbereich mit.
+|===
+
+=== Aufgabenstellung
+
+[loweralpha]
+. Überlegen Sie sich, welche Container sie verwenden möchten, um die Anforderungen zu erfüllen
+. Zeichnen Sie mindestens zwei Möglichkeiten auf
+. Beschreiben Sie die Vor- und Nachteile, die sich aus Ihren Überlegungen ergeben könnten
+
+TIP: Beachten Sie vor allem die Positionierung, die Abstände und die Ausrichtung der Controls. Vergessen Sie auch das Menü nicht.
+
+== Erstellen der Applikation [PU]
+
+=== Basis
+
+Als Basis finden Sie im link:{handout}[Praktikumsverzeichnis] das Projekt *Calculator* mit zwei bereitgestellten Klassen.
+Sie sind nicht verpflichtet, diese Klassen zu verwenden.
+Es steht Ihnen frei, eine eigene Struktur aufzubauen oder die Struktur zu erweitern.
+
+`Main`::
+Diese Klasse enthält das Grundgerüst der Hauptanwendung und muss erweitert werden.
+`ValueHandler`::
+Diese Klasse bietet Ihnen Hilfsfunktionen für die Prüfung der Eingabewerte und die Berechnung der Resultate.
+
+=== Aufgabenstellung
+
+[loweralpha]
+. Ergänzen Sie die Projektkonfiguration (Gradle) für den Einsatz von link:{url-openjfx}[JavaFX]
++
+[NOTE]
+====
+Seit Java 11 ist JavaFX nicht mehr Teil der Java Standard Edition und wird unabhängig davon im link:{url-openjfx}[OpenJFX-Projekt] weiterentwickelt.
+
+Für Projekte die Java 11 und neuer verwenden, muss es deshalb explizit zum Projekt hinzugefügt werden.
+
+Da JavaFX neben generischen Libraries (API, Controls, FXML) auch platform-/betriebssystemabhängige Komponenten benötigt, wird für Gradle (und Maven) ein PlugIn zur Verfügung gestellt, welches die notwendigen Komponenten (Dependencies) lädt und in den Prozess einbindet.
+====
+** Deklarieren und konfigurieren Sie das JavaFX-Plugin gemäss der link:{url-openjfx-gradle}[OpenJFX Anleitung für Gradle].
+** Verwenden Sie die JavaFX-Version `'11.0.2'`
+
+. Erstellen Sie das Layout für die Applikation
+** Bauen Sie den SceneGraph für die Anwendung gemäss Ihren Überlegungen aus der theoretischen Aufgabe zusammen und binden Sie diesen ins Hauptfenster ein.
+. Fügen Sie die Handler für die benötigten Events hinzu.
+** Entscheiden Sie, ob Sie innere Klassen verwenden wollen oder ob Sie mit anonymen Klassen arbeiten.
+** Auch eine Kombination ist möglich (und eventuell sinnvoll?).
+. Probieren Sie verschiedene Lösungsansätze und hinterfragen Sie die Vor- und Nachteile der gewählten Lösung.
+
+== Erstellen der Applikation mit FXML [PA]
+
+Nachdem Sie sich bis hierher einige Gedanken zur Verwendung der Container (Panes) gemacht haben und praktische Erfahrung mit dem Aufbau des User Interfaces gesammelt haben, sind Sie nun bereit für die Umsetzung Benutzeroberfläche mit FXML unter Verwendung des link:{url-scene-builder}[Scene Builder].
+
+TIP: FXML unterstützt die Trennung von View und Controller.
+Setzen Sie in dieser Aufgabe die Anwendung deshalb konsequent mit dem Model View Control (MVC) bzw. MVP (Model View Presenter) Pattern um.
+
+=== SceneBuilder
+
+SceneBuilder ist ein Werkzeug zur Bearbeitung von FXML-Dateien und ermöglicht somit die Erstellung und Bearbeitung eines SceneGraphs und die Verknüpfung mit einer zugehörigen Controller-Klasse.
+
+SceneBuilder muss als eigenständiges Werkzeug link:{url-scene-builder}[heruntergeladen und installiert] werden.
+
+[NOTE]
+IDE's können den SceneBuilder einbinden (FXML-Code-Ansicht & Scene Builder-Ansicht), bzw. liefern bereits eine Version von SceneBuilder mit (IntelliJ).
+Diese bietet jedoch meist nur einen eingeschränkten Funktionsumfang, weshalb es bei intensiver Arbeit trotzdem Sinn macht, die unabhängige Version zu installieren und aus der IDE aufzurufen (Dateipfad in Einstellungen konfigurieren und mit "Open In SceneBuilder" öffnen)
+
+=== Basis
+
+Als Basis finden Sie im link:{handout}[Praktikumsverzeichnis] das Projekt *FXML-Calculator* mit zwei bereitgestellten Klassen und einer leeren FXML-Datei `src/main/resources/ch/zhaw/prog2/fxmlcalculator/MainWindow.fxml`.
+[IMPORTANT]
+FXML-Dateien werden nicht kompiliert, müssen jedoch zur Laufzeit im Klassenpfad zur Verfügung stehen.
+Gradle (und Maven) erwartet deshalb, dass sie im Ressourcen-Ordner (default: `src/main/resources/`) abgelegt werden (am Besten im gleichen Package bzw. Unterverzeichnis wie die zugehörigen Klassen `ch/zhaw/prog2/fxmlcalculator/`). Beim Bilden der Anwendung werden Sie automatisch kopiert und beim Start in den Klassenpfad integriert.
+
+Sie sind nicht verpflichtet, diese Klassen zu verwenden.
+Es steht Ihnen frei, eine eigene Struktur aufzubauen oder die Struktur zu erweitern.
+
+`Main`::
+Diese Klasse enthält das Grundgerüst der Hauptanwendung und muss erweitert werden.
+`MainWindowController`::
+Diese Klasse ist fast leer und muss erweitert werden. Sie ist insbesondere noch nicht mit dem Layout (`MainWindow.fxml`) verbunden.
+`ValueHandler`::
+Diese Klasse enthält Hilfsfunktionen für die Prüfung der Eingabewerte und die Berechnung der Resultate.
+
+TIP: Falls Ihre IDE bereits ein Start-Projekt für FXML anbietet, können Sie auch dieses verwenden. Nehmen Sie sich die Zeit, die beiden Ansätze zu vergleichen und zu verstehen.
+
+=== Aufgabenstellung
+
+[loweralpha]
+. Verifizieren Sie die Projektkonfiguration in `build.gradle` für FXML. +
+Da für FXML ein zusätzliches JavaFX-Modul (`javafx.fxml`) benötigt wird, muss dieses in in der Konfiguration des Plugins hinzugefügt werden (sollte bereits konfiguriert sein).
+. Erstellen Sie den SceneGraph mit Hilfe des SceneBuilder als FXML-Spezifikation, laden diesen und binden ihn im Hauptfenster ein.
+** Als Vorlage können Sie die vorhandene `MainWindow.fxml` im Ressourcen-Ordner und die Hauptanwendungsklasse verwenden,
+. Erstellen Sie die Controllerklasse und verknüpfen Sie die Controls und Actions mit dem FXML-SceneGraph
+** Als Vorlage finden Sie im Praktiumsvezeichnis bereits eine Klasse für den Controller.
+//. Überlegen sie sich, wie die Modellklasse umgesetzt werden sollte, damit das MVC-Pattern erfüllt ist.
+//** Welche Hilfsmittel bietet JavaFX dazu an?
+//** Passen Sie ihre Anwendung entsprechend an.
+
+=== Hinweise
+
+Die Layout-Einstellungen für die verschiedenen Panes sind grundsätzlich so eingestellt, dass sich die Grösse der Panes nach dem vorhandenen und nach dem verwendeten Platz einstellt.
+Für die meisten Fälle ist das ok und sie müssen nur an wenigen Stellen eingreifen.
+Zum Beispiel um die Mindestbreite festzulegen.
+
+WARNING: Die Anzeige des Previews stimmt nicht genau mit der echten Anzeige überein. Starten Sie zwischendurch das Programm, um die echte Ansicht zu sehen.
+
+
+// Ende des Aufgabenblocks
+:!sectnums:
+
+== Abschluss
+
+Stellen Sie sicher, dass die Pflichtaufgabe mittels `gradle run` gestartet werden kann und pushen Sie die Lösung vor der Deadline in ihr Abgaberepository.
+
+
