@@ -1,0 +1,27 @@
+/*
+ * Gradle build configuration for specific lab module / exercise
+ * Default declarations can be found in the lab main build configuration (../../gradle.build)
+ * Declarations in this file extend or override the default values.
+ */
+// the Java plugin is added by default in the main lab configuration
+plugins {
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+}
+
+description = 'Lab02 Calculator'
+
+dependencies {
+
+}
+
+// Configuration for Application plugin
+application {
+    // Define the main class for the application.
+    mainClassName = 'ch.zhaw.prog2.calculator.Main'
+}
+
+javafx {
+    version = "11.0.2"
+    modules = [ 'javafx.controls' ]
+}
